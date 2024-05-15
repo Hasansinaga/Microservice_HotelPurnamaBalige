@@ -11,6 +11,6 @@ func Routing(app *fiber.App) {
 	kamar.Get("/", controllers.GetAllRoom)
 	kamar.Post("/create", controllers.CreateRoom)
 	kamar.Get("/:id", controllers.GetRoomByID)
-	kamar.Put("/update", controllers.UpdateRoom)
-	kamar.Delete("/delete", controllers.DeleteRoom)
+	kamar.Put("/update/:id", controllers.UpdateRoom)
+	kamar.Delete("/delete/:id", controllers.DeleteRoom)
 }

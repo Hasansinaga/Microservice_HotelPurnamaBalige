@@ -104,6 +104,7 @@ func CreateFacility(c *fiber.Ctx) error {
 	facility := entity.Facility{
 		Name:      input.Name,
 		Description: input.Description,
+		Rental_Price : input.Rental_Price,
 		Image:    filename, // Save filename instead of input.Gambar
 	}
 
@@ -145,7 +146,10 @@ func UpdateFacility(c *fiber.Ctx) error {
 	if input.Description != "" {
 		facility.Description = input.Description
 	}
-
+	if input.Rental_Price != 0 {
+		facility.Rental_Price = input.Rental_Price
+	}
+	
 	newImage, err := c.FormFile("image")
 	if err == nil {
 		if facility.Image != "" {

@@ -87,6 +87,26 @@ func GetAllRoomBooking(c *fiber.Ctx) error {
 	})
 }
 
+func GetRoomBookingByID(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	var booking entity.RoomBooking
+
+	err := database.DB.First(&booking, "id = ?", id).Error
+
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"status":  "failed",
+			"message": "Room Not Found",
+		})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"status":  "success",
+		"message": booking,
+	})
+}
+
 func CreateRoomBooking(c *fiber.Ctx) error {
 	input := new(request.RequestRoomBookingCreate)
 
@@ -202,5 +222,104 @@ func CreateRoomBooking(c *fiber.Ctx) error {
 		"status":  "success",
 		"message": roombooking,
 	})
+}
 
+func UpdateRoomBooking(c *fiber.Ctx) error {
+	id := c.Params("id")
+	input := new(request.RequestRoomBookingUpdate)
+
+	if err := c.BodyParser(input); err != nil {
+		return err
+	}
+
+	var booking entity.RoomBooking
+
+	err := database.DB.First(&booking, "id = ?", id).Error
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{
+			"status":  "failed",
+			"message": "Booking not found",
+		})
+	}
+
+	if input.CheckIn != "" {
+		checkIn, err := time.Parse("2006-01-02", input.CheckIn)
+		if err != nil {
+			return c.Status(400).JSON(fiber.Map{
+				"status":  "failed",
+				"message": "Invalid CheckIn date. Format should be YYYY-MM-DD",
+			})
+		}
+		booking.CheckIn = checkIn.Format("2006-01-02")
+	}
+
+	if input.CheckOut != "" {
+		checkOut, err := time.Parse("2006-01-02", input.CheckOut)
+		if err != nil {
+			return c.Status(400).JSON(fiber.Map{
+				"status":  "failed",
+				"message": "Invalid CheckOut date. Format should be YYYY-MM-DD",
+			})
+		}
+		booking.CheckOut = checkOut.Format("2006-01-02")
+	}
+
+	roomID, err := strconv.Atoi(c.FormValue("room_id"))
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"status":  "failed",
+			"message": "RoomID is required and must be an integer",
+		})
+	}
+
+	if roomID != 0 {
+		room, err := getRoomID(roomID)
+		if err != nil {
+			return c.Status(400).JSON(fiber.Map{
+				"status":  "failed",
+				"message": err.Error(),
+			})
+		}
+		room.Id = uint(roomID)
+		booking.RoomID = uint(roomID)
+	}
+
+	result := database.DB.Save(&booking)
+	if result.Error != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"status":  "failed",
+			"message": "Can't update booking",
+		})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"status":  "success",
+		"message": booking,
+	})
+}
+
+func DeleteRoomBooking(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	var booking entity.RoomBooking
+
+	err := database.DB.Debug().First(&booking, "id = ?", id).Error
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{
+			"status":  "failed",
+			"message": "RoomBooking Not Found",
+		})
+	}
+
+	if err := database.DB.Debug().Delete(&booking).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"status":  "failed",
+			"message": "Can't Delete RoomBooking",
+		})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"status":  "success",
+		"message": "RoomBooking deleted successfully!",
+	})
 }
