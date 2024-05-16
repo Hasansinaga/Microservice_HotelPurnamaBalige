@@ -15,7 +15,7 @@ import (
 )
 
 func getRoomID(roomID int) (*entity.Room, error) {
-	resp, err := http.Get(fmt.Sprintf("http://127.0.0.1:8003/room/%d", roomID))
+	resp, err := http.Get(fmt.Sprintf("http://127.0.0.1:8007/room/%d", roomID))
 	if err != nil {
 		return nil, fmt.Errorf("failed to make HTTP request: %v", err)
 	}
@@ -38,7 +38,7 @@ func getUserID(token string, UserID int) (*entity.User, error) {
 		Timeout: time.Second * 10,
 	}
 
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://127.0.0.1:8084/user/profile/%d", UserID), nil)
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://127.0.0.1:8010/user/profile/%d", UserID), nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to make HTTP request: %v", err)
 	}

@@ -25,7 +25,7 @@ func init() {
 }
 
 func getRoomCategoryByID(categoryID int) (*entity.RoomCategory, error) {
-	resp, err := http.Get(fmt.Sprintf("http://127.0.0.1:8081/roomCategory/%d", categoryID)) // Perbaikan: Menggunakan %d untuk format integer
+	resp, err := http.Get(fmt.Sprintf("http://127.0.0.1:8009/roomCategory/%d", categoryID)) // Perbaikan: Menggunakan %d untuk format integer
 	if err != nil {
 		return nil, fmt.Errorf("failed to make HTTP request: %v", err)
 	}

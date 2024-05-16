@@ -21,7 +21,7 @@ func main() {
 
 	routes.Routing(app)
 
-	err := app.Listen(":8010")
+	err := app.Listen(":8006")
 
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)

@@ -16,13 +16,13 @@ func main() {
 
 	app.Use(cors.New(cors.Config{
 		AllowCredentials: true,
-		AllowOrigins: "https://gofiber.io",
+		AllowOrigins:     "https://gofiber.io",
 	}))
 
 	routes.Route(app)
 
-	err := app.Listen(":8081")
-	if err != nil{
+	err := app.Listen(":8009")
+	if err != nil {
 		log.Fatalf("Failed to Listen: %v", err)
 	}
 }
